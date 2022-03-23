@@ -1,0 +1,184 @@
+---
+title: "Red de co-gustos"
+author: "María Fernanda Martínez García"
+date: "22/3/2022"
+output: html_document
+---
+Primero se debe cargar la libreria para realizar la red:
+```{r}
+library (igraph)
+```
+
+Cargamos la base de datos y arreglamos para poderla leer correctamente:
+```{r}
+gustoss <-read.csv("Base de datos/Red de co-gustos.csv")
+row.names(gustoss)<-gustoss[,1]
+gustoss<-gustoss[,-1]
+```
+Notita: para subir archivos a RMarkdown usamos tabulador para seleccionarlo.
+
+```{r}
+mat_corr <- cor (t(gustoss))
+diag (mat_corr) <-0 
+```
+Realizamos una matriz
+Se eliminan los 1 para observar mejor los datos
+
+__Red de co-gustos pesada (P)__
+```{r}
+pesad <-(1 + mat_corr)/2  
+diag (pesad) <- 0 
+```
+
+Realice una matriz de adyecencia para ajustar los datos y poder utilizarlos.
+Y en la segunda parte agregamos 0 en la diagonal de la matriz
+
+__Red de co-gustos dicotómica (D)__
+```{r}
+dicot <-ifelse (pesad > 0.5,1,0)
+```
+
+Agregamos valores de 0 y 1.
+
+
+***A) Dibuja la red con al menos tres layouts (P y D) ***
+
+
+Pesada
+-----
+
+Primero generamos un layout desde la matriz:
+```{r}
+pesad_1 <- graph_from_adjacency_matrix (pesad, mode = "undirected")
+plot(pesad_1)
+```
+
+Primero:
+```{r}
+pesad_lay_1 <-layout.grid (pesad_1) 
+plot(pesad_1, layout = pesad_lay_1)
+```
+
+Segundo:
+```{r}
+pesad_lay_2 <-layout.lgl (pesad_1) 
+plot(pesad_1, layout = pesad_lay_2)
+```
+
+Tercero:
+```{r}
+pesad_lay_3 <-layout.mds (pesad_1) 
+plot(pesad_1, layout = pesad_lay_3)
+```
+
+
+
+Dicotómica
+-----
+
+Primero generamos un layout desde la matriz:
+```{r}
+dicot_1 <- graph_from_adjacency_matrix (dicot,mode = "undirected")
+plot (dicot_1)
+```
+
+Primero:
+```{r}
+dicot_lay_1 <-layout.circle (dicot_1) 
+plot(dicot_1, layout = dicot_lay_1)
+```
+
+Segundo:
+```{r}
+dicot_lay_2 <-layout.drl (dicot_1) 
+plot(dicot_1, layout = dicot_lay_2)
+```
+
+Tercero:
+```{r}
+dicot_lay_3 <-layout.gem (dicot_1) 
+plot(dicot_1, layout = dicot_lay_3)
+```
+
+***B) Distribucíon de conectividades (D)***
+```{r}
+conet_dicot <- degree (dicot_1)
+conet_dicot
+hist (conet_dicot)
+```
+
+En el caso del histograma se observa en horizontal (donde dice conet_dicot) el numero de conexiones que va desde 12 a 26. En donde se puede observar por el tamaño de la barra en donde hay mayoría de conexiones (entre más grande sea) y la minoría (entre menor sea el tamaño).
+El histograma es unicamente para poder observar graficamente los resultados anteriores. También se puede ser logaritmicamente con: degree_distribution y log ="xy".
+
+***C) Nodos más conectados (D)***
+```{r}
+nod_dicot <- degree (dicot_1, mode = "all")
+sort (nod_dicot, decreasing = T)
+```
+
+Con degree observamos las conexiones mientras que sort los ordena desendentemente.
+Por lo tanto, los primeros nodos que aparecen en la lista son los más conectados.
+
+***D) Nodos más importantes con al menos tres medidas de centralidad (D)***
+Primero:
+```{r}
+centralization.closeness (graph = dicot_1)
+```
+
+Segundo:
+```{r}
+centralization.degree (graph = dicot_1)
+```
+
+Tercero:
+```{r}
+centralization.betweenness (graph = dicot_1)
+```
+
+***E) Clusters obtenidos con al menos tres métodos de clusterización (P y D)***
+
+Pesada
+---
+
+Primero:
+```{r}
+pesad_clus_1 <- cluster_leading_eigen (pesad_1)
+membership (pesad_clus_1)
+```
+
+Segundo:
+```{r}
+pesad_clus_2 <- cluster_edge_betweenness (pesad_1)
+membership (pesad_clus_2)
+```
+
+Tercero:
+```{r}
+pesad_clus_3 <- cluster_label_prop (pesad_1)
+membership (pesad_clus_3)
+```
+
+
+Dicotómica
+-----
+
+Primero:
+```{r}
+dicot_clus_1 <- cluster_leiden (dicot_1)
+membership (dicot_clus_1)
+```
+
+Segundo:
+```{r}
+dicot_clus_2 <- cluster_louvain (dicot_1)
+membership (dicot_clus_2)
+```
+
+Tercero:
+```{r}
+dicot_clus_3 <- cluster_louvain (dicot_1)
+membership (dicot_clus_3)
+```
+
+***F) Discute si las redes (P y D) son dirigidas o no.***
+Las redes no son dirigidas, porque no importan si ambos se relacionan. El proposito de las redes es observar los gustos, no necesariamente debe haber una afinidad de gustos entre ambas partes.

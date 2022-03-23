@@ -1,0 +1,65 @@
+---
+title: "Red de señalización"
+author: "María Fernanda Martínez García"
+date: "23/3/2022"
+output: html_document
+---
+Primero se debe cargar la libreria para realizar la red:
+```{r}
+library (BoolNet)
+```
+
+***A) Elabora una representación verbal de la red***
+En la red se observa una serie un proceso bioquimico acerca de la transducción de señales de plantas cuya señal es la hormona de la sequía, la cual termina en el cierre de los estomas.
+
+Observando unicamente la imagen nos damos cuenta que a pesar de las inhibiciones presentadas que estan representadas por la linea con otra linea vertical pequeña, se logra al cierre de estromas. Como también que hay procesos que van de la mano, es decir, las flechas muestran que sin las expresiones de estos compuestos no se daría una red de señalización que le daría una supervivencia a las plantas en ambientes de estrés. Sin embargo, todo este proceso en algún punto acabará y es por eso que nos sirven los atractores, lo cual nos muestra cuál sera el desarrollo de la red. Tambien cabe resaltar que debemos leer el articulo para poder denominar los OR y AND.
+
+***B) Elabora una tabla de posibles reglas de la red***
+targets, factors
+
+CIS, cGMP & cADPR & InsP3
+
+cGMP, GC
+
+cADPR, ADPRc
+
+InsP3, PLD
+
+GC, NO
+
+ADPRc, NO
+
+PLC,Ca 2
+
+NO, NOS
+
+NOS, Ca 2
+
+Ca2, CalM & !Ca ATPase & CIS
+
+Ca ATPase, Ca 2
+
+CalM, !Depolar
+
+KEV, Ca2
+
+H ATPase, !Ca 2
+
+AnionEM, Ca 2
+
+Closure, AnionEM & KOUT & KAP
+
+KOUT, Depolar
+
+KAP, Depolar
+
+Depolar, AnionEM & !KOUT & Ca2 & !H ATPase & KEV
+
+Esta tabla esta basada en la imagen mostrada.
+
+***C) Encuentra y discute biológicamente el significado de los atractores***
+```{r}
+# getAttractors (network = red)
+```
+No pude realizarlo porque no proceso mi compu la base de datos:( 
+Sin embargo, los atractores son estados a los que esta destinada a que quede la red. Es decir, lo que va a ocurrir en un determinado momento.

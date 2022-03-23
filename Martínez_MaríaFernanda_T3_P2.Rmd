@@ -1,0 +1,128 @@
+---
+title: "Red de regulación transripcional"
+author: "María Fernanda Martínez García"
+date: "22/3/2022"
+output: html_document
+---
+Primero se debe cargar la libreria para realizar la red:
+```{r}
+library (BoolNet)
+```
+
+***A) Escribe las tablas de verdad de las reglas ***
+Tabla de A 
+
+| B | A |
+|---|---|
+| 0 | 0 |
+| 1 | 1 |
+
+
+Tabla de B 
+
+| B | D | B AND NOT D |
+|---|---|-------------|
+| 0 | 0 |      0      |
+| 0 | 1 |      0      |
+| 1 | 0 |      1      |
+| 1 | 1 |      0      |
+
+
+Tabla de C 
+
+| E | A | C | E OR A AND C |
+|---|---|---|--------------|
+| 0 | 0 | 0 |       0      |
+| 1 | 0 | 0 |       1      |
+| 1 | 1 | 0 |       1      |
+| 1 | 1 | 1 |       1      |
+| 0 | 1 | 0 |       0      |
+| 0 | 1 | 1 |       1      |
+| 0 | 0 | 1 |       0      |
+
+
+Tabla de D 
+
+| B | NOT B |
+|---|-------|
+| 1 |   0   |
+| 0 |   1   |
+
+
+Tabla de E
+
+| D | A | D AND NOT A |
+|---|---|-------------|
+| 0 | 0 |      0      |
+| 1 | 0 |      1      |
+| 0 | 1 |      0      |
+| 1 | 1 |      0      |
+
+
+Tabla de F
+
+| B | C | B OR C |
+|---|---|--------|
+| 0 | 0 |    0   |
+| 1 | 0 |    1   |
+| 0 | 1 |    1   |
+| 1 | 1 |    1   |
+
+
+Notitas: las tablas las escribi con: https://www.tablesgenerator.com/markdown_tables
+:)
+
+***B) Escribe las reglas para generar una red de tipo Boolnet ***
+
+targets, factors
+
+A, B
+
+B, B & !D
+
+C, E | A & C
+
+D, !B
+
+E, D & !A
+
+F, B | C
+
+***Genera una red booleana: ***
+```{r}
+red_boo <- loadNetwork ("red_reglas.txt")
+red_boo
+```
+En un archivo de texto plano (en este caso, bloc de notas), escribí las reglas para generar la red, tal como enseñe antes.
+
+Donde el nombre de los genes los coloque en targets (A,B,C, D, E y F)y en factor la regla por lineas usando operadores donde:
+
+AND en R se escribe: &
+
+OR en R se escribe: |
+
+NOT en R se escribe: !
+
+Mientras que la funcion loadNetwork convierte esas reglas en una red booleana, que es con la que vamos a trabajar.
+
+***C) Encuentra todos los atractores de tu red ***
+```{r}
+atract <- getAttractors (network = red_boo)
+atract
+```
+Esta funcion identifica a los atractores en la red booleana anterior.
+
+***D) ¿Cuál sería el estado final más probable? ***
+
+El final más probable se conoce con los atractores. En este caso hay tres opciones: la primera es que el atractor 1 con una cuenca de atracción de 48 estados, el atractor 2 con una cuenca de atracción de 6 estados y el atractor 3 con una cuenca de atracción de 10 estados.
+
+***E) Dibuja todos los estados y sus atractores***
+
+La primer función hace una gráfica de los atractores; mientras que la segunda sobre los estados.
+
+Para leer se observa de forma horizontal, donde la primer columna es el primer estado y así sucesivamente, con las demas columnas.
+
+```{r}
+plotAttractors (atract)
+plotStateGraph (atract)
+```
